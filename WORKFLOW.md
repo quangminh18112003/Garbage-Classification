@@ -1,0 +1,207 @@
+# ✅ Training & GitHub Workflow Checklist
+
+## Setup Hoàn Thành
+
+### ✅ Project Structure
+- [x] Cấu trúc thư mục sắp xếp
+- [x] Dataset split (train/val/test)
+- [x] Configuration files
+- [x] Training script
+
+### ✅ Git Repository
+- [x] Git khởi tạo locally
+- [x] .gitignore cấu hình
+- [x] Initial commit
+- [x] README.md
+- [x] requirements.txt
+
+### ✅ Training Setup
+- [x] Data.yaml chỉ đúng đường dẫn
+- [x] train.py tối ưu cho CPU
+- [x] Model YOLOv8 Nano
+- [x] Batch size = 8
+- [x] Workers = 2
+
+### ✅ Documentation
+- [x] TRAINING_LOG.md
+- [x] GITHUB_SETUP.md
+- [x] commit_results.py
+
+## Hướng Dẫn Tiếp Theo
+
+### 📌 Bước 1: Tạo GitHub Repository
+```bash
+# 1. Truy cập https://github.com/new
+# 2. Đặt tên: Garbage-Classification
+# 3. Copy URL SSH hoặc HTTPS
+# 4. Chạy lệnh:
+git remote add origin YOUR_REPO_URL
+git branch -M main
+git push -u origin main
+```
+
+### 📌 Bước 2: Theo dõi Training
+```bash
+# Monitor training progress
+cd c:\python\Phanloairac\training
+# Training đang chạy ở background
+# Kết quả lưu ở: training/runs_train/exp2/
+```
+
+### 📌 Bước 3: Sau khi Training Hoàn Thành
+
+#### a) Kiểm tra Results:
+```bash
+# Xem best model metrics
+cat training/runs_train/exp2/results.csv | tail -5
+
+# Xem weights
+ls -la training/runs_train/exp2/weights/
+```
+
+#### b) Commit Results:
+```bash
+# 1. Run script để tạo summary
+python commit_results.py
+
+# 2. Hoặc manual commit
+git add training/runs_train/exp2/
+git commit -m "train: Complete epoch 150, mAP50: XX.X%"
+git push origin main
+```
+
+#### c) Copy Best Weights:
+```bash
+# Copy best model to GiaoDien
+cp training/runs_train/exp2/weights/best.pt GiaoDien/weights/best.pt
+
+# Commit weight update
+git add GiaoDien/weights/best.pt
+git commit -m "Update: Best model after training"
+git push origin main
+```
+
+### 📌 Bước 4: Test Model
+
+```bash
+# Start Streamlit app
+cd GiaoDien
+streamlit run app.py
+
+# Test with image/webcam
+```
+
+### 📌 Bước 5: Update Documentation
+
+Cập nhật README.md với:
+- Final metrics
+- Training time
+- Dataset statistics
+- Performance on test set
+
+```bash
+# Example commit
+git add README.md
+git commit -m "docs: Add final training metrics and results"
+git push origin main
+```
+
+## Daily Training Workflow
+
+```bash
+# Mỗi ngày training:
+cd c:\python\Phanloairac
+
+# 1. Check status
+git status
+
+# 2. Xem tiến độ training (nếu vẫn chạy)
+# tail -20 training/runs_train/exp2/train_output.log
+
+# 3. Khi training xong:
+python commit_results.py
+git add .
+git commit -m "train: Session X - $(date +%Y-%m-%d)"
+git push origin main
+```
+
+## Git Commands Quick Reference
+
+```bash
+# Status
+git status
+
+# View logs
+git log --oneline -10
+
+# View specific commit
+git show <commit-id>
+
+# Undo last commit
+git reset --soft HEAD~1
+
+# Push changes
+git push origin main
+
+# Pull latest
+git pull origin main
+
+# Create backup branch
+git branch backup-$(date +%Y-%m-%d)
+```
+
+## Important Files Locations
+
+```
+Phanloairac/
+├── training/
+│   ├── train.py              # Training script
+│   ├── data.yaml             # Dataset config
+│   └── runs_train/
+│       └── exp2/             # Latest results
+│           ├── weights/best.pt
+│           └── results.csv
+├── GiaoDien/
+│   ├── app.py                # Streamlit app
+│   └── weights/              # Model weights
+├── TRAINING_LOG.md           # Logs
+├── GITHUB_SETUP.md           # This file
+├── README.md                 # Project info
+└── .git/                     # Git repo
+```
+
+## Troubleshooting
+
+### Training bị timeout?
+```bash
+# Resume từ last checkpoint
+# Thêm vào train.py: resume=True
+```
+
+### Git push bị từ chối?
+```bash
+git pull origin main --rebase
+git push origin main
+```
+
+### Model weights quá lớn (>100MB)?
+```bash
+# Sử dụng Git LFS
+git lfs install
+git lfs track "*.pt"
+git add .gitattributes
+```
+
+---
+
+## 🎯 Training Metrics Target
+
+- **mAP50**: > 75%
+- **mAP50-95**: > 50%
+- **Box Loss**: < 1.5
+- **Cls Loss**: < 0.5
+
+---
+
+**Last Updated**: November 24, 2025
+**Status**: ✅ Setup Complete - Training Running

@@ -11,27 +11,29 @@ def main():
     # Thực hiện train - Tối ưu cho CPU
     model.train(
         data='data.yaml',      # đường dẫn file data.yaml
-        epochs=150,             # số epoch
-        imgsz=640,             # kích thước ảnh
+        epochs=50,              # giảm epoch để test
+        imgsz=416,             # giảm kích thước ảnh từ 640
         seed=seed,             # gán seed để tái lặp kết quả
-        batch=8,               # giảm batch size cho CPU
+        batch=4,               # giảm batch size còn 4
         project='runs_train',  # thư mục lưu kết quả
-        name='exp',            # tên folder con trong runs_train
+        name='exp_cpu',        # tên folder riêng cho CPU
         device='cpu',          # sử dụng CPU
-        workers=2,             # số workers (giảm cho CPU)
+        workers=0,             # không sử dụng workers (CPU bottleneck)
         amp=False,             # tắt Automatic Mixed Precision cho CPU
+        cache=False,           # không cache images
+        patience=20,           # early stopping
         # Một số hyperparameter augment thường dùng, có thể tinh chỉnh:
         hsv_h=0.015,           # biến thiên Hue
         hsv_s=0.7,             # biến thiên Saturation
         hsv_v=0.4,             # biến thiên Value
-        degrees=60,           # xoay ảnh ngẫu nhiên
-        translate=0.2,         # tịnh tiến ảnh ngẫu nhiên
-        scale=0.5,             # scale ảnh ngẫu nhiên
-        shear=10,             # shear ảnh
-        flipud=0.1,            # lật trên-dưới
-        fliplr=0.5,            # lật trái-phải
-        mosaic=1.0,            # xác suất mosaic
-        mixup=0.1              # giảm mixup cho CPU
+        degrees=30,            # giảm độ xoay
+        translate=0.1,         # giảm tịnh tiến
+        scale=0.3,             # giảm scale
+        shear=5,               # giảm shear
+        flipud=0.05,           # giảm lật
+        fliplr=0.3,            # giảm flip
+        mosaic=0.8,            # giảm mosaic
+        mixup=0.0              # tắt mixup
     )
 
 if __name__ == "__main__":
