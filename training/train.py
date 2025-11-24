@@ -17,8 +17,8 @@ def main():
         batch=8,               # giảm batch size cho CPU
         project='runs_train',  # thư mục lưu kết quả
         name='exp',            # tên folder con trong runs_train
-        device=0,              # auto device selection
-        workers=4,             # số workers (giảm cho CPU)
+        device='cpu',          # sử dụng CPU
+        workers=2,             # số workers (giảm cho CPU)
         amp=False,             # tắt Automatic Mixed Precision cho CPU
         # Một số hyperparameter augment thường dùng, có thể tinh chỉnh:
         hsv_h=0.015,           # biến thiên Hue
