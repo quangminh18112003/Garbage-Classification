@@ -1,0 +1,7 @@
+path: ../dataset_split  # Đường dẫn tới thư mục dataset_split
+
+train: images/train
+val: images/val
+test: images/test  
+nc: 3  # Số lớp
+names: ['glass', 'biological', 'plastic']
