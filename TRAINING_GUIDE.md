@@ -161,3 +161,35 @@ If you need low-latency webcam detection on Streamlit:
 ---
 
 If you'd like, I'll add this file (`TRAINING_GUIDE.md`) to the repository and update `README.md` to link to it. Also I can create an example realtime inference script next — which option do you prefer from the next steps above?
+
+## 11. Exporting & running ONNX / server / client
+
+### Export to ONNX
+Use the utility script `training/export_to_onnx.py` shipped in the repo. Example:
+
+```powershell
+# Export the best.pt you produced during training to models/best.onnx
+python training/export_to_onnx.py --weights training/runs_train/exp_cpu/weights/best.pt --output models/best.onnx --imgsz 416
+```
+
+After export you should have `models/best.onnx`.
+
+### Run the FastAPI model server
+Run the server using uvicorn (server loads ONNX if available, else will fallback to the PyTorch/ultralytics weights if present):
+
+```powershell
+# from repo root
+uvicorn server.api:app --host 0.0.0.0 --port 8000
+```
+
+Server endpoint: POST /predict with multipart/form-data (file field name `file`), parameter `conf` for confidence threshold.
+
+### Use the Streamlit client
+We added `GiaoDien/app_server.py` — a light Streamlit client that uploads an image or camera capture to the server and shows returned image/detections:
+
+```powershell
+pip install -r requirements.txt
+streamlit run GiaoDien/app_server.py
+```
+
+This flow separates UI and model inference, enabling faster, more stable real-time behavior when the model lives on a dedicated server or GPU.

@@ -91,6 +91,21 @@ streamlit run app.py
 # Test with image/webcam
 ```
 
+### Optional: Export ONNX + run model server + Streamlit client
+
+```powershell
+# Export ONNX (example)
+python training/export_to_onnx.py --weights training/runs_train/exp2/weights/best.pt --output models/best.onnx --imgsz 416
+
+# Run server (loads ONNX if available)
+uvicorn server.api:app --host 0.0.0.0 --port 8000
+
+# Run streamlit client
+streamlit run GiaoDien/app_server.py
+```
+
+This setup moves heavy compute (model inference) to a separate process/server and keeps Streamlit lightweight for UI. It helps achieve smoother realtime UX and lets you move the model server to a GPU-enabled machine later.
+
 ### 📌 Bước 5: Update Documentation
 
 Cập nhật README.md với:
