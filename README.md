@@ -33,6 +33,7 @@ pandas>=2.0.0
 ```
 
 ## 🎯 Training
+See the full training methodology, how we train, and realtime inference tips in the dedicated guide: `TRAINING_GUIDE.md`.
 
 ```bash
 cd training
