@@ -16,19 +16,19 @@ def display_tracker_options():
         tracker_type = st.radio("Trình theo dõi", ("bytetrack.yaml", "botsort.yaml"))
     return is_display_tracker, tracker_type
 
-def _display_detected_frames(conf, model, st_frame, image, is_display_tracking=None, tracker=None):
+def _display_detected_frames(conf, model, st_frame, image, is_display_tracking=None, tracker=None, imgsz=640):
     """Hiển thị frame detect + trả về boxes."""
     image = cv2.resize(image, (720, int(720*(9/16))))
     if is_display_tracking:
-        res = model.track(image, conf=conf, persist=True, tracker=tracker)
+        res = model.track(image, conf=conf, persist=True, tracker=tracker, imgsz=imgsz, iou=0.45)
     else:
-        res = model.predict(image, conf=conf)
+        res = model.predict(image, conf=conf, imgsz=imgsz, iou=0.45)
 
     frame_plot = res[0].plot()
     st_frame.image(frame_plot, caption="Video đã phát hiện", channels="BGR", use_container_width=True)
     return res[0].boxes
 
-def play_webcam(conf, model):
+def play_webcam(conf, model, imgsz=640):
     """Webcam Start/Stop với bảng + biểu đồ realtime."""
     source_webcam = settings.WEBCAM_PATH
     is_display_tracker, tracker = display_tracker_options()
@@ -59,7 +59,7 @@ def play_webcam(conf, model):
                 st.warning("⚠️ Không nhận được frame từ webcam")
                 break
 
-            boxes = _display_detected_frames(conf, model, st_frame, frame, is_display_tracker, tracker)
+            boxes = _display_detected_frames(conf, model, st_frame, frame, is_display_tracker, tracker, imgsz=imgsz)
 
             # --- Bảng + biểu đồ ---
             data = []

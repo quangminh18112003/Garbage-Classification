@@ -29,7 +29,8 @@ page = st.sidebar.radio("📑 Chọn chức năng", ["Phát hiện"])
 if page == "Phát hiện":
     st.sidebar.subheader("🧠 Cấu hình mô hình học máy")
     model_type = st.sidebar.radio("🔍 Chọn chế độ", ['Phát hiện'])
-    confidence = float(st.sidebar.slider("📊 Chọn độ tin cậy (%)", 25, 100, 40))/100
+    confidence = float(st.sidebar.slider("📊 Chọn độ tin cậy (%)", 15, 100, 25))/100
+    imgsz = st.sidebar.slider("🖼️ Kích thước ảnh (px)", 320, 1280, 640, step=32)
 
     model_path = Path(settings.DETECTION_MODEL)
     
@@ -89,7 +90,7 @@ if page == "Phát hiện":
 
         with col2:
             if source_img and st.sidebar.button("🚀 Phát hiện đối tượng"):
-                res = model.predict(uploaded_image, conf=confidence)
+                res = model.predict(uploaded_image, conf=confidence, imgsz=imgsz, iou=0.45)
                 frame_plot = res[0].plot()[:, :, ::-1]
                 st.image(frame_plot, caption="📍 Ảnh sau phát hiện", use_container_width=True)
 
@@ -101,7 +102,7 @@ if page == "Phát hiện":
 
     # --- Webcam ---
     elif source_radio == settings.WEBCAM:
-        helper.play_webcam(confidence, model)
+        helper.play_webcam(confidence, model, imgsz=imgsz)
 
     else:
         st.error("⚠️ Vui lòng chọn loại nguồn hợp lệ!")

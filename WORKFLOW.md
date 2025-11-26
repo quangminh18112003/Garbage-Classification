@@ -3,33 +3,21 @@
 ## Setup Hoàn Thành
 
 ### ✅ Project Structure
-- [x] Cấu trúc thư mục sắp xếp
-- [x] Dataset split (train/val/test)
-- [x] Configuration files
-- [x] Training script
 
 ### ✅ Git Repository
-- [x] Git khởi tạo locally
-- [x] .gitignore cấu hình
-- [x] Initial commit
-- [x] README.md
-- [x] requirements.txt
 
 ### ✅ Training Setup
-- [x] Data.yaml chỉ đúng đường dẫn
-- [x] train.py tối ưu cho CPU
-- [x] Model YOLOv8 Nano
-- [x] Batch size = 8
-- [x] Workers = 2
 
 ### ✅ Documentation
-- [x] TRAINING_LOG.md
-- [x] GITHUB_SETUP.md
-- [x] commit_results.py
 
 ## Hướng Dẫn Tiếp Theo
 
-### 📌 Bước 1: Tạo GitHub Repository
+#### Hướng dẫn benchmark FPS:
+```powershell
+python benchmark_inference.py --model_type onnx --model_path training/best.onnx --image_dir dataset_split/images/test
+python benchmark_inference.py --model_type pt --model_path training/best.pt --image_dir dataset_split/images/test --device cpu
+```
+Kết quả sẽ được ghi vào `benchmark_results.txt` để so sánh tốc độ ONNX vs PyTorch.
 ```bash
 # 1. Truy cập https://github.com/new
 # 2. Đặt tên: Garbage-Classification

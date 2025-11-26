@@ -1,0 +1,7 @@
+# Benchmark Results
+
+This file contains inference speed (FPS) results for ONNX and PyTorch models, measured using `benchmark_inference.py`.
+
+Each entry includes model type, path, average FPS, and per-image inference times.
+
+---

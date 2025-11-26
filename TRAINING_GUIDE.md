@@ -59,8 +59,24 @@ python train.py
 ```
 
 Training output and artifacts appear in:
-- `training/runs_train/<exp_name>/` — contains `weights/` (`best.pt`) and `results.csv` and plots
 
+---
+
+## 5. Benchmarking Inference Speed (FPS)
+
+To measure model inference speed (frames per second, FPS) for ONNX and PyTorch models:
+
+1. Run the benchmarking script:
+    ```powershell
+    python benchmark_inference.py --model_type onnx --model_path training/best.onnx --image_dir dataset_split/images/test
+    python benchmark_inference.py --model_type pt --model_path training/best.pt --image_dir dataset_split/images/test --device cpu
+    ```
+2. Results are printed and logged to `benchmark_results.txt`.
+3. Use this to compare ONNX vs PyTorch speed on your hardware.
+
+Script location: `Phanloairac/benchmark_inference.py`
+
+Output file: `Phanloairac/benchmark_results.txt`
 
 ## 5. Recording & versioning training results
 
