@@ -29,8 +29,9 @@ page = st.sidebar.radio("📑 Chọn chức năng", ["Phát hiện"])
 if page == "Phát hiện":
     st.sidebar.subheader("🧠 Cấu hình mô hình học máy")
     model_type = st.sidebar.radio("🔍 Chọn chế độ", ['Phát hiện'])
-    confidence = float(st.sidebar.slider("📊 Chọn độ tin cậy (%)", 15, 100, 25))/100
-    imgsz = st.sidebar.slider("🖼️ Kích thước ảnh (px)", 320, 1280, 640, step=32)
+    confidence = float(st.sidebar.slider("📊 Chọn độ tin cậy (%)", 10, 100, 20))/100
+    imgsz = st.sidebar.slider("🖼️ Kích thước ảnh (px)", 320, 1280, 800, step=32)
+    max_det = st.sidebar.slider("🔢 Số lượng phát hiện tối đa", 10, 300, 100, step=10)
 
     model_path = Path(settings.DETECTION_MODEL)
     
@@ -42,10 +43,18 @@ if page == "Phát hiện":
         st.stop()
     
     try:
-        model = helper.load_model(model_path)
+        with st.spinner("🔄 Đang tải mô hình..."):
+            model = helper.load_model(model_path)
+        st.sidebar.success(f"✅ Model đã tải: {model_path.name}")
+        # Hiển thị thông tin model
+        with st.sidebar.expander("ℹ️ Thông tin Model"):
+            st.write(f"**Đường dẫn:** {model_path}")
+            st.write(f"**Classes:** {len(model.names)}")
+            st.write(f"**Tên classes:** {', '.join(model.names.values())}")
     except Exception as ex:
         st.error(f"❌ Không thể tải mô hình: {model_path}")
         st.error(str(ex))
+        st.info("💡 Kiểm tra xem file best.pt có tồn tại trong GiaoDien/weights/ không")
         st.stop()
 
     st.sidebar.subheader("📸 Chọn nguồn ảnh/Video")
@@ -90,15 +99,38 @@ if page == "Phát hiện":
 
         with col2:
             if source_img and st.sidebar.button("🚀 Phát hiện đối tượng"):
-                res = model.predict(uploaded_image, conf=confidence, imgsz=imgsz, iou=0.45)
-                frame_plot = res[0].plot()[:, :, ::-1]
-                st.image(frame_plot, caption="📍 Ảnh sau phát hiện", use_container_width=True)
-
-                df, class_count = display_results(res)
-                with st.expander("📋 Kết quả phát hiện"):
-                    st.dataframe(df)
-                st.subheader("📊 Biểu đồ số lượng từng class")
-                plot_class_counts(class_count)
+                with st.spinner("🔄 Đang xử lý ảnh..."):
+                    try:
+                        # Thử với nhiều cấu hình khác nhau để phát hiện tốt hơn
+                        res = model.predict(
+                            uploaded_image, 
+                            conf=confidence, 
+                            imgsz=imgsz, 
+                            iou=0.45,
+                            max_det=max_det,
+                            agnostic_nms=False,
+                            verbose=False
+                        )
+                        frame_plot = res[0].plot()[:, :, ::-1]
+                        st.image(frame_plot, caption="📍 Ảnh sau phát hiện", use_container_width=True)
+                        
+                        # Hiển thị thông tin debug
+                        num_detections = len(res[0].boxes)
+                        if num_detections == 0:
+                            st.warning(f"⚠️ Không phát hiện được đối tượng nào với cấu hình hiện tại!")
+                            st.info(f"💡 Thử giảm confidence xuống 10-15% hoặc tăng image size lên 1024px")
+                            st.info(f"📊 Cấu hình hiện tại: Confidence={confidence*100:.0f}%, Image Size={imgsz}px, Max Detections={max_det}")
+                        else:
+                            st.success(f"✅ Phát hiện được {num_detections} đối tượng!")
+                            
+                            df, class_count = display_results(res)
+                            with st.expander("📋 Kết quả phát hiện"):
+                                st.dataframe(df)
+                            st.subheader("📊 Biểu đồ số lượng từng class")
+                            plot_class_counts(class_count)
+                    except Exception as e:
+                        st.error(f"❌ Lỗi khi phát hiện: {str(e)}")
+                        st.exception(e)
 
     # --- Webcam ---
     elif source_radio == settings.WEBCAM:
