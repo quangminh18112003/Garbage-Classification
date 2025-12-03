@@ -176,3 +176,4 @@ amp=True  # Mixed precision
 
 **Lưu ý**: Cải thiện model cần thời gian và dữ liệu. Giải pháp nhanh (giảm confidence) có thể giúp ngay, nhưng để model tốt lâu dài cần retrain với dataset tốt hơn.
 
+
