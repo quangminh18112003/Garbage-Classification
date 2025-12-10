@@ -20,7 +20,6 @@ class TrainingConfig:
         self.data_yaml = 'data.yaml'  # File cấu hình dataset
         self.epochs = 10  # Số epoch (10 epochs cho training nhanh)
         self.imgsz = 640  # Kích thước ảnhcd training
-        python train_10_epochs.py
         self.batch = 8  # Batch size
         self.seed = 666  # Seed để tái lặp kết quả
         
